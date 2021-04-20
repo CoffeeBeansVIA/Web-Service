@@ -29,10 +29,7 @@ namespace WebAPI.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Sensor>()
-                .HasOne<SensorType>(s => s.SensorType)
-                .WithOne(st => st.Sensor)
-                .HasForeignKey<SensorType>(ad => ad.SensorId);
+            
             
         }
 
