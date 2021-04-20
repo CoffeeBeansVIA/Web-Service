@@ -16,10 +16,8 @@ namespace WebAPI.Database
 
         public DataContext()
         {
-
-
         }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source = Database.db");
@@ -29,9 +27,13 @@ namespace WebAPI.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            
+            modelBuilder.Entity<SensorType>().HasData(
+                new SensorType() {Id = 1, Type = "Temperature"},
+                new SensorType() {Id = 2, Type = "Humidity"},
+                new SensorType() {Id = 3, Type = "Sound"},
+                new SensorType() {Id = 4, Type = "Light"},
+                new SensorType() {Id = 5, Type = "CO2"},
+                new SensorType() {Id = 6, Type = "PIR"});
         }
-
     }
 }
