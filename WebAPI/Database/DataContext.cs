@@ -18,7 +18,7 @@ namespace WebAPI.Database
         {
 
 
-    }
+        }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +33,7 @@ namespace WebAPI.Database
                 .HasOne<SensorType>(s => s.SensorType)
                 .WithOne(st => st.Sensor)
                 .HasForeignKey<SensorType>(ad => ad.SensorId);
+            
         }
 
     }

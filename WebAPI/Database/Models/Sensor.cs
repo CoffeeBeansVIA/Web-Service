@@ -6,6 +6,7 @@ namespace WebAPI.Database.Models
     {
         [Key]
         public int Id { get; set; }
+        
         public string Model { get; set; }
         public string Unit { get; set; }
         public Farm Farm { get; set; }
