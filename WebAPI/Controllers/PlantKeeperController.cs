@@ -12,7 +12,7 @@ namespace WebAPI.Controllers
     {
         private IPlantKeeperService _plantKeeperService;
 
-        public PlantKeeperController(PlantKeeperService plantKeeperService)
+        public PlantKeeperController(IPlantKeeperService plantKeeperService)
         {
             _plantKeeperService = plantKeeperService;
         }
