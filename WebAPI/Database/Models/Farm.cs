@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Database.Models
 {
@@ -9,7 +10,7 @@ namespace WebAPI.Database.Models
 
         public string Name { get; set; }
         public string Location { get; set; }
+        public int PlantKeeperId { get; set; }
         public PlantKeeper PlantKeeper { get; set; }
-
     }
 }
