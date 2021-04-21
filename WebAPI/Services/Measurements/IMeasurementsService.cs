@@ -8,5 +8,7 @@ namespace WebAPI.Services
     {
         Task<List<Measurement>> GetSensorMeasurementsAsync(int sensorId, int limit);
         Task<Measurement> AddMeasurementAsync(Measurement measurement);
+        // Temporary
+        Task<Measurement> GetRandomSensorMeasurementAsync(int sensorId);
     }
 }
