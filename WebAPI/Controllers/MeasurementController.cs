@@ -9,7 +9,6 @@ using WebAPI.Services;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
     public class MeasurementController : ControllerBase
     {
         private readonly IMeasurementsService _measurementsService;
@@ -20,7 +19,7 @@ namespace WebAPI.Controllers
         }
         
         [HttpGet]
-        [Route("~/api/sensors/{sensorId:int}/measurements")]
+        [Route("api/sensors/{sensorId:int}/measurements")]
         public async Task<ActionResult<IEnumerable<Measurement>>> GetSensorMeasurements(int sensorId, int limit = 5)
         {
             return await _measurementsService.GetSensorMeasurementsAsync(sensorId, limit);
@@ -29,7 +28,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Measurement))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("~/api/sensors/{sensorId:int}/randomMeasurements")]
+        [Route("api/sensors/{sensorId:int}/randomMeasurements")]
         public async Task<IActionResult> GetRandomMeasurement(int sensorId)
         {
             try
