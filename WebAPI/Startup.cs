@@ -15,6 +15,7 @@ using WebAPI.Database;
 using WebAPI.Database.Models;
 using WebAPI.Services;
 using WebAPI.Services.Sensors;
+using WebAPI.Services.SensorSettings;
 
 namespace WebAPI
 {
@@ -36,6 +37,7 @@ namespace WebAPI
             services.AddScoped<IPlantKeeperService, PlantKeeperService>();
             services.AddScoped<IFarmService, FarmService>();
             services.AddScoped<ISensorsService, SensorsService>();
+            services.AddScoped<ISensorSettingsService, SensorSettingsService>();
             services.AddScoped<IMeasurementsService, MeasurementService>();
         }
 

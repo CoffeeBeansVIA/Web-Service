@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
 using WebAPI.Database.Models;
+using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services
 {
@@ -17,16 +18,38 @@ namespace WebAPI.Services
             _dataContext = context;
         }
 
-        public async Task<Farm> GetFarmByIdAsync(int farmId)
+        public async Task<FarmDetailDto> GetFarmByIdAsync(int farmId)
         {
-            try
-            {
-                return await _dataContext.Farm.FindAsync(farmId);
-            }
-            catch (NullReferenceException)
-            {
-                return new Farm();
-            }
+            var foundFarm = await _dataContext.Farm
+                .Select(f => new FarmDetailDto()
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Location = f.Location,
+                    PlantKeepers = f.PlantKeepers.Select(pk => new PlantKeeperDetailDto
+                    {
+                        Id = pk.Id,
+                        FirstName = pk.FirstName,
+                        LastName = pk.LastName,
+                        Email = pk.Email,
+                        DateOfBirth = pk.DateOfBirth,
+                        Gender = pk.Gender
+                    }),
+                    Sensors = f.Sensors.Select(s => new SensorDetailDto
+                    {
+                        Id = s.Id,
+                        Model = s.Model,
+                        Type = s.SensorType.Type,
+                        Unit = s.Unit,
+                        SensorSetting = s.SensorSetting != null ? new SensorSettingDto
+                        {
+                            desiredValue = s.SensorSetting.DesiredValue,
+                            deviationValue = s.SensorSetting.DeviationValue
+                        } : null
+                    })
+                }).SingleOrDefaultAsync(f => f.Id == farmId);
+
+            return foundFarm;
         }
 
         public async Task<List<Farm>> GetAllFarmsAsync()
