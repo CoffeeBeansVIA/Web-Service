@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebAPI.Database.Models;
 
 // using Microsoft.EntityFrameworkCore;
@@ -15,6 +12,7 @@ namespace WebAPI.Database
         public DbSet<PlantKeeper> PlantKeeper { get; set; }
         public DbSet<Sensor> Sensor { get; set; }
         public DbSet<SensorType> SensorType { get; set; }
+        public DbSet<SensorSetting> SensorSettings { get; set; }
 
         public DataContext()
         {
@@ -40,9 +38,12 @@ namespace WebAPI.Database
             // Seed farm
             Farm farm = new Farm()
             {
-                Id = 1, Name = "Lorem", Location = "Radhustorvet 4", PlantKeeperId = 1
+                Id = 1, Name = "Lorem", Location = "Radhustorvet 4"
             };
             modelBuilder.Entity<Farm>().HasData(farm);
+
+            modelBuilder.Entity("FarmPlantKeeper").HasData(
+                new { FarmsId = 1, PlantKeepersId = 1 });
 
             // Seed sensor types
             modelBuilder.Entity<SensorType>().HasData(
@@ -58,6 +59,10 @@ namespace WebAPI.Database
                 new Sensor() {Id = 1, Model = "T1", Unit = "C", FarmId = 1, SensorTypeId = 1},
                 new Sensor() {Id = 2, Model = "H1", Unit = "%", FarmId = 1, SensorTypeId = 2},
                 new Sensor() {Id = 3, Model = "C1", Unit = "ppm", FarmId = 1, SensorTypeId = 5});
+            
+            // Seed sensor settings
+            modelBuilder.Entity<SensorSetting>().HasData(
+                new SensorSetting() {Id = 1, SensorId = 1, DesiredValue = 25, DeviationValue = 5});
             
             // Seed measurements
             modelBuilder.Entity<Measurement>().HasData(
