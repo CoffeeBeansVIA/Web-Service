@@ -41,5 +41,14 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
         }
+        
+        [HttpPost]
+        [Route("~/api/sensors/{sensorId:int}/measurements")]
+        public async Task<IActionResult> AddSensorMeasurement(int sensorId, Measurement measurement)
+        {
+            await _measurementsService.AddMeasurementAsync(measurement);
+
+            return Ok();
+        }
     }
 }
