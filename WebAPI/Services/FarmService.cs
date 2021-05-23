@@ -43,8 +43,8 @@ namespace WebAPI.Services
                         Unit = s.Unit,
                         SensorSetting = s.SensorSetting != null ? new SensorSettingDto
                         {
-                            desiredValue = s.SensorSetting.DesiredValue,
-                            deviationValue = s.SensorSetting.DeviationValue
+                            DesiredValue = s.SensorSetting.DesiredValue,
+                            DeviationValue = s.SensorSetting.DeviationValue
                         } : null
                     })
                 }).SingleOrDefaultAsync(f => f.Id == farmId);

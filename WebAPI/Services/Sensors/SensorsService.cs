@@ -30,8 +30,8 @@ namespace WebAPI.Services.Sensors
                     Unit = s.Unit,
                     SensorSetting = new SensorSettingDto
                     {
-                        desiredValue = s.SensorSetting.DesiredValue,
-                        deviationValue = s.SensorSetting.DeviationValue
+                        DesiredValue = s.SensorSetting.DesiredValue,
+                        DeviationValue = s.SensorSetting.DeviationValue
                     }
                     
                 }).SingleOrDefaultAsync(s => s.Id == sensorId);

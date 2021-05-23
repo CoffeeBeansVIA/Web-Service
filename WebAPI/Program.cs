@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +14,29 @@ namespace WebAPI
     {
         public static void Main(string[] args)
         {
+            ArrayList note = new ArrayList();
+            note.Add(5);
+            note.Add(9);
+
+            double total = 0;
+            for (int i = 0; i < note.Count; i++)
+            {
+                try
+                {
+                    total= total + Convert.ToDouble(note[i]);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            Console.WriteLine(total/note.Count);
+            
+            
             CreateHostBuilder(args).Build().Run();
+            
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
