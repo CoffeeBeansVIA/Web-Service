@@ -27,7 +27,6 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetSensorById(int sensorId)
         {
-            Console.WriteLine("HERE");
             var foundSensor = await _sensorsService.GetSensorByIdAsync(sensorId);
 
             if (foundSensor == null)

@@ -14,13 +14,12 @@ namespace WebAPI.Database
         public DbSet<SensorType> SensorType { get; set; }
         public DbSet<SensorSetting> SensorSettings { get; set; }
 
-        public DataContext()
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source = Database.db");
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
