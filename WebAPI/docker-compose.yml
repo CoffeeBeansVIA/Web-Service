@@ -2,6 +2,7 @@
 
 services:
   web:
+    container_name: "web_api"
     build: .
     ports:
       - "8000:80"
