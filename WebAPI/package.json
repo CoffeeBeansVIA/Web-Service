@@ -1,0 +1,7 @@
+﻿{
+  "name": "WebAPI",
+  "version": "0.1.0",
+  "scripts": {
+    "migrations": "dotnet ef migrations add InitialCreate && dotnet ef database update"
+  }
+}
