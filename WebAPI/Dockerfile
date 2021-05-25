@@ -12,22 +12,3 @@ EXPOSE 80/tcp
 
 RUN chmod +x ./entrypoint.sh
 CMD /bin/bash ./entrypoint.sh
-
-
-#FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
-#WORKDIR /app
-#
-#COPY *.csproj ./
-#RUN dotnet restore
-#
-#COPY . ./
-#RUN dotnet publish -c Release -o out
-#
-#FROM mcr.microsoft.com/dotnet/sdk:5.0
-#WORKDIR /app
-#EXPOSE 80/tcp
-#COPY --from=build-env /app/out .
-#ENTRYPOINT ["dotnet", "WebAPI.dll"]
-
-#RUN chmod +x ./entrypoint.sh
-#CMD /bin/bash ./entrypoint.sh
