@@ -18,12 +18,6 @@ namespace WebAPI.Database
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Seed plant keeper
