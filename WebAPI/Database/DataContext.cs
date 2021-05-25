@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebAPI.Database.Models;
 
-// using Microsoft.EntityFrameworkCore;
+using WebAPI.Models.Models;
 
 namespace WebAPI.Database
 {

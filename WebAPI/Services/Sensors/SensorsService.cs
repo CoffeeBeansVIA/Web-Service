@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Database.Models;
+using WebAPI.Models.Models;
 using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.Sensors
@@ -30,8 +30,8 @@ namespace WebAPI.Services.Sensors
                     Unit = s.Unit,
                     SensorSetting = new SensorSettingDto
                     {
-                        desiredValue = s.SensorSetting.DesiredValue,
-                        deviationValue = s.SensorSetting.DeviationValue
+                        DesiredValue = s.SensorSetting.DesiredValue,
+                        DeviationValue = s.SensorSetting.DeviationValue
                     }
                     
                 }).SingleOrDefaultAsync(s => s.Id == sensorId);
@@ -39,14 +39,24 @@ namespace WebAPI.Services.Sensors
             return foundSensor;
         }
 
-        public async Task<Sensor> AddSensorAsync(Sensor sensor)
+        public async Task<SensorDto> AddSensorAsync(SensorDto sensorDto)
         {
             try
             {
+                var sensor = new Sensor()
+                {
+                    Id = sensorDto.Id,
+                    Model = sensorDto.Model,
+                    SensorType = new SensorType()
+                    {
+                        Type = sensorDto.Type
+                    }
+                };
+                
                  await _dataContext.Sensor.AddAsync(sensor);
                  await _dataContext.SaveChangesAsync();
 
-                 return sensor;
+                 return sensorDto;
             }
             catch (Exception e)
             {

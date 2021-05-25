@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Database.Models;
-using WebAPI.Services;
+using WebAPI.Models.DTOs;
+using WebAPI.Services.Measurements;
 
 namespace WebAPI.Controllers
 {
@@ -21,13 +21,13 @@ namespace WebAPI.Controllers
         
         [HttpGet]
         [Route("~/api/sensors/{sensorId:int}/measurements")]
-        public async Task<ActionResult<IEnumerable<Measurement>>> GetSensorMeasurements(int sensorId, int limit = 5)
+        public async Task<ActionResult<IList<MeasurementDto>>> GetSensorMeasurements(int sensorId, int limit = 5)
         {
-            return await _measurementsService.GetSensorMeasurementsAsync(sensorId, limit);
+            return Ok(await _measurementsService.GetSensorMeasurementsAsync(sensorId, limit));
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Measurement))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MeasurementDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("~/api/sensors/{sensorId:int}/randomMeasurements")]
         public async Task<IActionResult> GetRandomMeasurement(int sensorId)
@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
         
         [HttpPost]
         [Route("~/api/sensors/{sensorId:int}/measurements")]
-        public async Task<IActionResult> AddSensorMeasurement(int sensorId, Measurement measurement)
+        public async Task<IActionResult> AddSensorMeasurement(int sensorId, MeasurementDto measurement)
         {
             await _measurementsService.AddMeasurementAsync(measurement);
 

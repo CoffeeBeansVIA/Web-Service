@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using WebAPI.Database.Models;
+using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.SensorSettings
 {
     public interface ISensorSettingsService
     {
-        Task<SensorSetting> GetSensorSettingsAsync(int sensorId);
-        Task<SensorSetting> UpdateSensorSettingsAsync(SensorSetting sensorSetting);
+        Task<SensorSettingDto> GetSensorSettingsAsync(int sensorId);
+        Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting);
     }
 }

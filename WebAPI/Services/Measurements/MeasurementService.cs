@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Database.Models;
+using WebAPI.Models.Models;
+using WebAPI.Models.DTOs;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Measurements
 {
     public class MeasurementService : IMeasurementsService
     {
@@ -18,21 +19,53 @@ namespace WebAPI.Services
             _dataContext = dataContext;
         }
         
-        public async Task<List<Measurement>> GetSensorMeasurementsAsync(int sensorId, int limit)
+        public async Task<IList<MeasurementDto>> GetSensorMeasurementsAsync(int sensorId, int limit)
         {
-            return await _dataContext.Measurement.Where(m => m.SensorId == sensorId).OrderByDescending(m => m.Time).Take(limit).Reverse().ToListAsync();
-        }
+            var list = await _dataContext.Measurement.Where(m => m.SensorId == sensorId).OrderByDescending(m => m.Time).Take(limit).Reverse().ToListAsync();
 
-        public async Task<Measurement> AddMeasurementAsync(Measurement measurement)
+            return list.Select(m => new MeasurementDto
+            {
+                Id = m.Id,
+                Time = m.Time,
+                Date = m.Date,
+                Value = m.Value,
+                SensorId = m.SensorId,
+                Sensor = new SensorDto()
+                {
+                    Id = m.Sensor.Id,
+                    Model = m.Sensor.Model,
+                    Type = m.Sensor.SensorType.Type,
+                }
+            }).ToList();
+        }
+        
+        public async Task<MeasurementDto> AddMeasurementAsync(MeasurementDto measurementDto)
         {
+            var measurement = new Measurement()
+            {
+                Id = measurementDto.Id,
+                Time = measurementDto.Time,
+                Date = measurementDto.Date,
+                Value = measurementDto.Value,
+                SensorId = measurementDto.SensorId,
+                Sensor = new Sensor()
+                {
+                    Id = measurementDto.Sensor.Id,
+                    Model = measurementDto.Sensor.Model,
+                    SensorType = new SensorType()
+                    {
+                        Type = measurementDto.Sensor.Type
+                    }
+                }
+            };
+            
             await _dataContext.Measurement.AddAsync(measurement);
             await _dataContext.SaveChangesAsync();
 
-            return measurement;
+            return measurementDto;
         }
-
-        // Temporary
-        public async Task<Measurement> GetRandomSensorMeasurementAsync(int sensorId)
+        
+        public async Task<MeasurementDto> GetRandomSensorMeasurementAsync(int sensorId)
         {
             var foundSensor = _dataContext.Sensor.Find(sensorId);
 
@@ -40,20 +73,36 @@ namespace WebAPI.Services
                 throw new NullReferenceException();
 
             DateTime now = DateTime.Now;
-            Measurement measurement = new Measurement() {Time = now.ToString("HH:mm:ss"), Date = now.ToString("d"), SensorId = sensorId};;
+            MeasurementDto measurementDto = new MeasurementDto() {Time = now.ToString("HH:mm:ss"), Date = now.ToString("d"), SensorId = sensorId};;
             
             if (foundSensor.SensorTypeId == 1)
-                measurement.Value = Math.Round(GetRandomDecimal(23.5, 26.5), 1);
+                measurementDto.Value = Math.Round(GetRandomDecimal(23.5, 26.5), 1);
             else if (foundSensor.SensorTypeId == 2)
-                measurement.Value = Math.Round(GetRandomDecimal(92, 96));
+                measurementDto.Value = Math.Round(GetRandomDecimal(92, 96));
             else if (foundSensor.SensorTypeId == 5)
-                measurement.Value = Math.Round(GetRandomDecimal(250, 350));
+                measurementDto.Value = Math.Round(GetRandomDecimal(250, 350));
 
-
+            var measurement = new Measurement()
+            {
+                Date = measurementDto.Date,
+                Id = measurementDto.Id,
+                Value = measurementDto.Value,
+                SensorId = measurementDto.SensorId,
+                Sensor = new Sensor()
+                {
+                    Id = measurementDto.Sensor.Id,
+                    Model = measurementDto.Sensor.Model,
+                    SensorType = new SensorType()
+                    {
+                        Type = measurementDto.Sensor.Type
+                    }
+                }
+            };
+            
             await _dataContext.Measurement.AddAsync(measurement);
             await _dataContext.SaveChangesAsync();
 
-            return measurement;
+            return measurementDto;
         }
         
         private decimal GetRandomDecimal(double min, double max)

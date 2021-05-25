@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Database.Models;
-using WebAPI.Services;
+using WebAPI.Models.DTOs;
+using WebAPI.Services.PlantKeepers;
 
 namespace WebAPI.Controllers
 {
@@ -10,7 +10,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class PlantKeeperController : ControllerBase
     {
-        private IPlantKeeperService _plantKeeperService;
+        private readonly IPlantKeeperService _plantKeeperService;
 
         public PlantKeeperController(IPlantKeeperService plantKeeperService)
         {
@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         }
         
         [HttpGet("{plantKeeperId}")]
-        public async Task<ActionResult<PlantKeeper>> GetPlantKeeper(int plantKeeperId)
+        public async Task<ActionResult<PlantKeeperDetailDto>> GetPlantKeeper(int plantKeeperId)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePlantKeeper(PlantKeeper plantKeeper)
+        public async Task<IActionResult> CreatePlantKeeper(PlantKeeperDto plantKeeper)
         {
             try
             {
