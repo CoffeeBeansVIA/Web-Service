@@ -7,5 +7,6 @@
         public int SensorId { get; set; }
         
         public SensorDto Sensor { get; set; }
+
     }
 }

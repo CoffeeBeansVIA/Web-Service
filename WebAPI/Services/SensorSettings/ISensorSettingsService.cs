@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.SensorSettings
@@ -7,5 +8,6 @@ namespace WebAPI.Services.SensorSettings
     {
         Task<SensorSettingDto> GetSensorSettingsAsync(int sensorId);
         Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting);
-    }
+        Task<ActionResult<SensorSettingDto>> GetSensorSettingsByIdAsync(int sensorId);
+}
 }
