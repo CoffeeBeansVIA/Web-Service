@@ -36,8 +36,8 @@ namespace WebAPI
             
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebAPI", Version = "v1"}); });
-            services.AddScoped<IPlantKeeperService, PlantKeeperService>();
-            services.AddScoped<IFarmService, FarmService>();
+            services.AddScoped<IPlantKeepersService, PlantKeepersService>();
+            services.AddScoped<IFarmsService, FarmsService>();
             services.AddScoped<ISensorsService, SensorsService>();
             services.AddScoped<ISensorSettingsService, SensorSettingsService>();
             services.AddScoped<IMeasurementsService, MeasurementService>();

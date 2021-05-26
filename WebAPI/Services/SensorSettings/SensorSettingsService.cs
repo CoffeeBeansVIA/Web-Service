@@ -31,10 +31,10 @@ namespace WebAPI.Services.SensorSettings
             throw new NotImplementedException();
         }
 
-        public async Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting)
+        public async Task<SensorSettingDto> UpdateSensorSettingsAsync(int sensorId, SensorSettingDto sensorSetting)
         {
-            var foundSensor = _dataContext.Sensor.Where(s => s.Id == sensorSetting.SensorId)
-                .Include(s => s.SensorSetting).SingleOrDefault();
+            var foundSensor = await _dataContext.Sensor.Where(s => s.Id == sensorId)
+                .Include(s => s.SensorSetting).SingleOrDefaultAsync();
 
             if (foundSensor == null)
                 throw new NullReferenceException();
@@ -43,8 +43,7 @@ namespace WebAPI.Services.SensorSettings
             var sensorSettingDto = new SensorSettingDto()
             {
                 DesiredValue = foundSensor.SensorSetting.DesiredValue,
-                DeviationValue = foundSensor.SensorSetting.DeviationValue,
-                SensorId = foundSensor.SensorSetting.SensorId
+                DeviationValue = foundSensor.SensorSetting.DeviationValue
             };
 
             foundSensor.SensorSetting.DesiredValue = sensorSetting.DesiredValue;

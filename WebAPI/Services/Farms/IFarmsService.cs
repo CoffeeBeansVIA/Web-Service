@@ -4,7 +4,7 @@ using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.Farms
 {
-    public interface IFarmService
+    public interface IFarmsService
     {
         Task<FarmDetailDto> GetFarmByIdAsync(int farmId);
         Task<IList<FarmDetailDto>> GetAllFarmsAsync();

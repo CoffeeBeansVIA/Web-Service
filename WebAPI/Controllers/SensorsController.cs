@@ -22,8 +22,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{sensorId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetSensorById(int sensorId)
         {
             var foundSensor = await _sensorsService.GetSensorByIdAsync(sensorId);
@@ -43,19 +41,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{sensorId}/settings")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutSensorSettings(int sensorId, [FromBody] SensorSettingDto sensorSetting)
+        public async Task<IActionResult> PutSensorSettings(int sensorId, SensorSettingDto sensorSetting)
         {
-            sensorSetting.SensorId = sensorId;
-
             try
             {
-                await _sensorSettingsService.UpdateSensorSettingsAsync(sensorSetting);
+                await _sensorSettingsService.UpdateSensorSettingsAsync(sensorId, sensorSetting);
 
                 return Ok();
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 return NotFound();
             }
@@ -69,7 +63,7 @@ namespace WebAPI.Controllers
                 var sensorSettings = await _sensorSettingsService.GetSensorSettingsByIdAsync(sensorId);
                 return sensorSettings;
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 return NotFound();
             }

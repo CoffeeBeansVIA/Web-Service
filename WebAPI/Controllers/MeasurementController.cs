@@ -27,8 +27,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MeasurementDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("~/api/sensors/{sensorId:int}/randomMeasurements")]
         public async Task<IActionResult> GetRandomMeasurement(int sensorId)
         {
@@ -36,7 +34,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(await _measurementsService.GetRandomSensorMeasurementAsync(sensorId));
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 return NotFound();
             }

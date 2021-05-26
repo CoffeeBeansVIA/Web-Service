@@ -9,11 +9,11 @@ using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.Farms
 {
-    public class FarmService : IFarmService
+    public class FarmsService : IFarmsService
     {
         private readonly DataContext _dataContext;
 
-        public FarmService(DataContext context)
+        public FarmsService(DataContext context)
         {
             _dataContext = context;
         }

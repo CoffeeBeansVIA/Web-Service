@@ -10,11 +10,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class PlantKeeperController : ControllerBase
     {
-        private readonly IPlantKeeperService _plantKeeperService;
+        private readonly IPlantKeepersService _plantKeepersService;
 
-        public PlantKeeperController(IPlantKeeperService plantKeeperService)
+        public PlantKeeperController(IPlantKeepersService plantKeepersService)
         {
-            _plantKeeperService = plantKeeperService;
+            _plantKeepersService = plantKeepersService;
         }
         
         [HttpGet("{plantKeeperId}")]
@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return await _plantKeeperService.GetPlantKeeperByIdAsync(plantKeeperId);
+                return await _plantKeepersService.GetPlantKeeperByIdAsync(plantKeeperId);
             }
             catch (Exception e)
             {
@@ -36,7 +36,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _plantKeeperService.RemovePlantKeeperByIdAsync(plantKeeperId);
+                await _plantKeepersService.RemovePlantKeeperByIdAsync(plantKeeperId);
                 return Ok();
             }
             catch (Exception e)
@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _plantKeeperService.CreatePlantKeeperAsync(plantKeeper);
+                await _plantKeepersService.CreatePlantKeeperAsync(plantKeeper);
                 return Ok();
             }
             catch (Exception e)

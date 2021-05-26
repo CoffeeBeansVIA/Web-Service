@@ -7,7 +7,7 @@ namespace WebAPI.Services.SensorSettings
     public interface ISensorSettingsService
     {
         Task<SensorSettingDto> GetSensorSettingsAsync(int sensorId);
-        Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting);
+        Task<SensorSettingDto> UpdateSensorSettingsAsync(int sensorId, SensorSettingDto sensorSetting);
         Task<ActionResult<SensorSettingDto>> GetSensorSettingsByIdAsync(int sensorId);
 }
 }

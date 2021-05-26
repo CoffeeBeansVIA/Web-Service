@@ -8,11 +8,11 @@ using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.PlantKeepers
 {
-    public class PlantKeeperService : IPlantKeeperService
+    public class PlantKeepersService : IPlantKeepersService
     {
         private DataContext _dataContext;
         
-        public PlantKeeperService(DataContext dataContext)
+        public PlantKeepersService(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
