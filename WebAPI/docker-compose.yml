@@ -8,8 +8,10 @@ services:
       - "8000:80"
     depends_on:
       - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
   db:
-    image: microsoft/mssql-server-linux # test for mssql-2019
+    image: mcr.microsoft.com/mssql/server # test for mssql-2019
     hostname: 'db'
     ports:
       - "9001:1433"
