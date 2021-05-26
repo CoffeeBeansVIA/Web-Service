@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Database.Models;
 using WebAPI.Models.DTOs;
-using WebAPI.Services;
+using WebAPI.Services.Farms;
 
 namespace WebAPI.Controllers
 {
@@ -34,11 +33,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IList<Farm>>> GetFarms(int plantKeeperId)
+        public async Task<ActionResult<IList<FarmDetailDto>>> GetFarms()
         {
             try
             {
-                return await _farmService.GetAllFarmsAsync();
+                return Ok(await _farmService.GetAllFarmsAsync());
             }
             catch (Exception e)
             {
@@ -63,7 +62,7 @@ namespace WebAPI.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> CreateFarm(Farm farm)
+        public async Task<IActionResult> CreateFarm(FarmDto farm)
         {
             try
             {

@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebAPI.Database.Models;
+using WebAPI.Models.DTOs;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Measurements
 {
     public interface IMeasurementsService
     {
-        Task<List<Measurement>> GetSensorMeasurementsAsync(int sensorId, int limit);
-        Task<Measurement> AddMeasurementAsync(Measurement measurement);
-        // Temporary
-        Task<Measurement> GetRandomSensorMeasurementAsync(int sensorId);
+        Task<IList<MeasurementDto>> GetSensorMeasurementsAsync(int sensorId, int limit);
+        Task<MeasurementDto> AddMeasurementAsync(MeasurementDto measurement);
+        Task<MeasurementDto> GetRandomSensorMeasurementAsync(int sensorId);
     }
 }

@@ -18,6 +18,6 @@ namespace WebAPI.Models.DTOs
         public string Email { get; set; }
         public string DateOfBirth { get; set; }
         public string Gender { get; set; }
-        //public ICollection<FarmDetailDto> Farms { get; set; }
+        public IEnumerable<FarmDetailDto> Farms { get; set; }
     }
 }
