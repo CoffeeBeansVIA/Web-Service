@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Database.Models;
 using WebAPI.Models.DTOs;
 
 namespace WebAPI.Services.SensorSettings
@@ -18,8 +17,21 @@ namespace WebAPI.Services.SensorSettings
             _dataContext = dataContext;
         }
 
+        // public async Task<SensorSettings> GetSensorSettingsAsync(int sensorId)
+        // {
+        //     var foundSensor = _dataContext.Sensor.Find(sensorId);
+        //     
+        //     if (foundSensor == null)
+        //         throw new NullReferenceException();
+        //     
+        //     await _dataContext.SensorSettingses.
+        // }
+        public Task<SensorSettingDto> GetSensorSettingsAsync(int sensorId)
+        {
+            throw new NotImplementedException();
+        }
 
-        public async Task<SensorSetting> UpdateSensorSettingsAsync(SensorSetting sensorSetting)
+        public async Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting)
         {
             var foundSensor = _dataContext.Sensor.Where(s => s.Id == sensorSetting.SensorId)
                 .Include(s => s.SensorSetting).SingleOrDefault();
@@ -28,14 +40,19 @@ namespace WebAPI.Services.SensorSettings
                 throw new NullReferenceException();
 
             // If sensor's settings weren't previously set
-            foundSensor.SensorSetting ??= new SensorSetting();
+            var sensorSettingDto = new SensorSettingDto()
+            {
+                DesiredValue = foundSensor.SensorSetting.DesiredValue,
+                DeviationValue = foundSensor.SensorSetting.DeviationValue,
+                SensorId = foundSensor.SensorSetting.SensorId
+            };
 
             foundSensor.SensorSetting.DesiredValue = sensorSetting.DesiredValue;
             foundSensor.SensorSetting.DeviationValue = sensorSetting.DeviationValue;
             _dataContext.SensorSettings.Update(foundSensor.SensorSetting);
             await _dataContext.SaveChangesAsync();
 
-            return foundSensor.SensorSetting;
+            return sensorSettingDto;
         }
 
         public async Task<ActionResult<SensorSettingDto>> GetSensorSettingsByIdAsync(int sensorId)

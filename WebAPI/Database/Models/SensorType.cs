@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebAPI.Database.Models
+namespace WebAPI.Models.Models
 {
     public class SensorType
     {

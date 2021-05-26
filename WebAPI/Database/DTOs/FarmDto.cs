@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using WebAPI.Database.Models;
 
 namespace WebAPI.Models.DTOs
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace WebAPI.Database.Models
+namespace WebAPI.Models.Models
 {
     public class PlantKeeper
     {

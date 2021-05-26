@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Database.Models;
 using WebAPI.Models.DTOs;
 using WebAPI.Services.Sensors;
 using WebAPI.Services.SensorSettings;
@@ -36,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Sensor>> AddSensor([FromBody] Sensor sensor)
+        public async Task<ActionResult<SensorDto>> AddSensor([FromBody] SensorDto sensor)
         {
             await _sensorsService.AddSensorAsync(sensor);
 
@@ -46,7 +45,7 @@ namespace WebAPI.Controllers
         [HttpPut("{sensorId}/settings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutSensorSettings(int sensorId, [FromBody] SensorSetting sensorSetting)
+        public async Task<IActionResult> PutSensorSettings(int sensorId, [FromBody] SensorSettingDto sensorSetting)
         {
             sensorSetting.SensorId = sensorId;
 
