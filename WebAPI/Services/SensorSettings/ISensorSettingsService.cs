@@ -1,13 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.Models;
 
 namespace WebAPI.Services.SensorSettings
 {
     public interface ISensorSettingsService
     {
-        Task<SensorSettingDto> GetSensorSettingsAsync(int sensorId);
-        Task<SensorSettingDto> UpdateSensorSettingsAsync(SensorSettingDto sensorSetting);
-        Task<ActionResult<SensorSettingDto>> GetSensorSettingsByIdAsync(int sensorId);
-}
+        Task<SensorSetting> GetSensorSettingsByIdAsync(int sensorId);
+        Task RemoveSensorSettingsByIdAsync(int sensorId);
+        Task<SensorSetting> UpdateSensorSettingsAsync(int sensorId, SensorSetting sensorSetting);
+    }
 }

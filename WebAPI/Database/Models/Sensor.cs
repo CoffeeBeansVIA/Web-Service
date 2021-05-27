@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebAPI.Models.Models
+﻿namespace WebAPI.Database.Models
 {
-    public class Sensor
+    public class Sensor : BaseModel
     {
         public int Id { get; set; }
         public string Model { get; set; }
-        public string Unit { get; set; }
-        
+
         public int FarmId { get; set; }
         public Farm Farm { get; set; }
         

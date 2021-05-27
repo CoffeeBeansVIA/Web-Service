@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.VisualBasic.CompilerServices;
 
-namespace WebAPI.Models.Models
+namespace WebAPI.Database.Models
 {
-    public class PlantKeeper
+    public class PlantKeeper : BaseModel
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

@@ -1,0 +1,22 @@
+﻿version: "3"
+
+services:
+  web:
+    container_name: "web_api"
+    build: .
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+  db:
+    image: mcr.microsoft.com/mssql/server # test for mssql-2019
+    hostname: 'db'
+    ports:
+      - "9001:1433"
+    environment:
+      DatabaseServer: "db"
+      DatabaseUser: "SA"
+      SA_PASSWORD: "Secret777"
+      ACCEPT_EULA: "Y"

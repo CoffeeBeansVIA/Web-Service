@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
 
 namespace WebAPI.Services.Farms
 {
-    public interface IFarmService
+    public interface IFarmsService
     {
+        Task<FarmDetailDto> GetFarmByEUI(string EUI);
         Task<FarmDetailDto> GetFarmByIdAsync(int farmId);
         Task<IList<FarmDetailDto>> GetAllFarmsAsync();
         Task RemoveFarmByIdAsync(int farmId);

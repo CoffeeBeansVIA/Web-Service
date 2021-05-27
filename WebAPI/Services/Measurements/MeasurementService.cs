@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Models.Models;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.Models;
 
 namespace WebAPI.Services.Measurements
 {
@@ -18,96 +17,85 @@ namespace WebAPI.Services.Measurements
         {
             _dataContext = dataContext;
         }
-        
-        public async Task<IList<MeasurementDto>> GetSensorMeasurementsAsync(int sensorId, int limit)
-        {
-            var list = await _dataContext.Measurement.Where(m => m.SensorId == sensorId).OrderByDescending(m => m.Time).Take(limit).Reverse().ToListAsync();
 
-            return list.Select(m => new MeasurementDto
-            {
-                Id = m.Id,
-                Time = m.Time,
-                Date = m.Date,
-                Value = m.Value,
-                SensorId = m.SensorId,
-                Sensor = new SensorDto()
-                {
-                    Id = m.Sensor.Id,
-                    Model = m.Sensor.Model,
-                    Type = m.Sensor.SensorType.Type,
-                }
-            }).ToList();
-        }
-        
-        public async Task<MeasurementDto> AddMeasurementAsync(MeasurementDto measurementDto)
+        public async Task<Measurement> AddMeasurementAsync(int sensorId, Measurement measurement)
         {
-            var measurement = new Measurement()
-            {
-                Id = measurementDto.Id,
-                Time = measurementDto.Time,
-                Date = measurementDto.Date,
-                Value = measurementDto.Value,
-                SensorId = measurementDto.SensorId,
-                Sensor = new Sensor()
-                {
-                    Id = measurementDto.Sensor.Id,
-                    Model = measurementDto.Sensor.Model,
-                    SensorType = new SensorType()
-                    {
-                        Type = measurementDto.Sensor.Type
-                    }
-                }
-            };
+            await DbFindSensorThrowableAsync(sensorId);
+
+            measurement.SensorId = sensorId;
+
+            return await DbAddMeasurementAsync(measurement);
+        }
+
+        public async Task<IEnumerable<Measurement>> GetSensorMeasurementsAsync(int sensorId, int limit)
+        {
+            await DbFindSensorThrowableAsync(sensorId);
             
+            return await _dataContext.Measurement
+                .Where(m => m.SensorId == sensorId)
+                .OrderByDescending(m => m.Time)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Measurement>> GetSensorMeasurementsBetweenDatesAsync(int sensorId, DateTime from, DateTime to, int limit = 5)
+        {
+            await DbFindSensorThrowableAsync(sensorId);
+
+            return await _dataContext.Measurement
+                .Where(m => m.Time >= from && m.Time <= to)
+                .OrderByDescending(m => m.Time)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+        public async Task<Measurement> GetRandomValueSensorMeasurementAsync(int sensorId)
+        {
+            var foundSensor = await DbFindSensorThrowableAsync(sensorId);
+
+            var randomMeasurement = new Measurement
+            {
+                Time = DateTime.Now,
+                SensorId = sensorId
+            };
+
+            randomMeasurement.Value = foundSensor.SensorTypeId switch
+            {
+                1 => GetRandomInt(23, 26),
+                2 => GetRandomInt(92, 96),
+                5 => GetRandomInt(250, 350),
+                _ => randomMeasurement.Value
+            };
+
+            return await DbAddMeasurementAsync(randomMeasurement);
+        }
+
+        private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
+        {
             await _dataContext.Measurement.AddAsync(measurement);
             await _dataContext.SaveChangesAsync();
 
-            return measurementDto;
+            return measurement;
         }
-        
-        public async Task<MeasurementDto> GetRandomSensorMeasurementAsync(int sensorId)
+
+        private async Task<Sensor> DbFindSensorThrowableAsync(int sensorId)
         {
-            var foundSensor = _dataContext.Sensor.Find(sensorId);
+            var foundSensor = await DbFindSensorAsync(sensorId);
 
             if (foundSensor == null)
                 throw new NullReferenceException();
 
-            DateTime now = DateTime.Now;
-            MeasurementDto measurementDto = new MeasurementDto() {Time = now.ToString("HH:mm:ss"), Date = now.ToString("d"), SensorId = sensorId};;
-            
-            if (foundSensor.SensorTypeId == 1)
-                measurementDto.Value = Math.Round(GetRandomDecimal(23.5, 26.5), 1);
-            else if (foundSensor.SensorTypeId == 2)
-                measurementDto.Value = Math.Round(GetRandomDecimal(92, 96));
-            else if (foundSensor.SensorTypeId == 5)
-                measurementDto.Value = Math.Round(GetRandomDecimal(250, 350));
+            return foundSensor;
+        }
 
-            var measurement = new Measurement()
-            {
-                Date = measurementDto.Date,
-                Id = measurementDto.Id,
-                Value = measurementDto.Value,
-                SensorId = measurementDto.SensorId,
-                Sensor = new Sensor()
-                {
-                    Id = measurementDto.Sensor.Id,
-                    Model = measurementDto.Sensor.Model,
-                    SensorType = new SensorType()
-                    {
-                        Type = measurementDto.Sensor.Type
-                    }
-                }
-            };
-            
-            await _dataContext.Measurement.AddAsync(measurement);
-            await _dataContext.SaveChangesAsync();
-
-            return measurementDto;
+        private async Task<Sensor> DbFindSensorAsync(int sensorId)
+        {
+            return await _dataContext.Sensor.FindAsync(sensorId);
         }
         
-        private decimal GetRandomDecimal(double min, double max)
+        private int GetRandomInt(int min, int max)
         {
-            return new decimal(_random.NextDouble() * (max-min) + min);
+            return _random.Next(min, max);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
 using WebAPI.Services.Farms;
 
 namespace WebAPI.Controllers
@@ -12,19 +12,28 @@ namespace WebAPI.Controllers
     [ApiController]
     public class FarmsController : ControllerBase
     {
-        private readonly IFarmService _farmService;
+        private readonly IFarmsService _farmsService;
 
-        public FarmsController(IFarmService farmService)
+        public FarmsController(IFarmsService farmsService)
         {
-            _farmService = farmService;
+            _farmsService = farmsService;
+        }
+
+        [HttpGet("eui/{EUI}")]
+        public async Task<IActionResult> GetFarmByEui(string eui)
+        {
+            var foundFarm = await _farmsService.GetFarmByEUI(eui);
+
+            if (foundFarm == null)
+                return NotFound();
+
+            return Ok(foundFarm);
         }
         
         [HttpGet("{farmId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFarm(int farmId)
         {
-            var foundFarm = await _farmService.GetFarmByIdAsync(farmId);
+            var foundFarm = await _farmsService.GetFarmByIdAsync(farmId);
 
             if (foundFarm == null)
                 return NotFound();
@@ -37,7 +46,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await _farmService.GetAllFarmsAsync());
+                return Ok(await _farmsService.GetAllFarmsAsync());
             }
             catch (Exception e)
             {
@@ -51,7 +60,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _farmService.RemoveFarmByIdAsync(farmId);
+                await _farmsService.RemoveFarmByIdAsync(farmId);
                 return Ok();
             }
             catch (Exception e)
@@ -66,7 +75,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _farmService.CreateFarmAsync(farm);
+                await _farmsService.CreateFarmAsync(farm);
                 return Ok();
             }
             catch (Exception e)

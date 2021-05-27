@@ -1,5 +1,9 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,11 +30,15 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>();
+            Console.WriteLine("DefaultConnection -> " + Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContextPool<DataContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebAPI", Version = "v1"}); });
-            services.AddScoped<IPlantKeeperService, PlantKeeperService>();
-            services.AddScoped<IFarmService, FarmService>();
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IPlantKeepersService, PlantKeepersService>();
+            services.AddScoped<IFarmsService, FarmsService>();
             services.AddScoped<ISensorsService, SensorsService>();
             services.AddScoped<ISensorSettingsService, SensorSettingsService>();
             services.AddScoped<IMeasurementsService, MeasurementService>();
