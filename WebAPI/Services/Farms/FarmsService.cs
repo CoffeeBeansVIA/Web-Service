@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Models.Models;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
+using WebAPI.Database.Models;
 
 namespace WebAPI.Services.Farms
 {
@@ -18,12 +18,13 @@ namespace WebAPI.Services.Farms
             _dataContext = context;
         }
 
-        public async Task<FarmDetailDto> GetFarmByIdAsync(int farmId)
+        public async Task<FarmDetailDto> GetFarmByEUI(string eui)
         {
             var foundFarm = await _dataContext.Farm
                 .Select(f => new FarmDetailDto
                 {
                     Id = f.Id,
+                    Eui = f.Eui,
                     Name = f.Name,
                     Location = f.Location,
                     PlantKeepers = f.PlantKeepers.Select(pk => new PlantKeeperDetailDto
@@ -39,8 +40,42 @@ namespace WebAPI.Services.Farms
                     {
                         Id = s.Id,
                         Model = s.Model,
-                        Type = s.SensorType.Type,
-                        Unit = s.Unit,
+                        // Type = s.SensorType.Type,
+                        // Unit = s.Unit,
+                        SensorSetting = s.SensorSetting != null ? new SensorSettingDto
+                        {
+                            DesiredValue = s.SensorSetting.DesiredValue,
+                            DeviationValue = s.SensorSetting.DeviationValue
+                        } : null
+                    })
+                }).SingleOrDefaultAsync(f => f.Eui == eui);
+
+            return foundFarm;
+        }
+
+        public async Task<FarmDetailDto> GetFarmByIdAsync(int farmId)
+        {
+            var foundFarm = await _dataContext.Farm
+                .Select(f => new FarmDetailDto
+                {
+                    Id = f.Id,
+                    Eui = f.Eui,
+                    Name = f.Name,
+                    Location = f.Location,
+                    PlantKeepers = f.PlantKeepers.Select(pk => new PlantKeeperDetailDto
+                    {
+                        Id = pk.Id,
+                        FirstName = pk.FirstName,
+                        LastName = pk.LastName,
+                        Email = pk.Email,
+                        DateOfBirth = pk.DateOfBirth,
+                        Gender = pk.Gender
+                    }),
+                    Sensors = f.Sensors.Select(s => new SensorDetailDto
+                    {
+                        Id = s.Id,
+                        Model = s.Model,
+                        // Type = s.SensorType.Type,
                         SensorSetting = s.SensorSetting != null ? new SensorSettingDto
                         {
                             DesiredValue = s.SensorSetting.DesiredValue,
@@ -64,6 +99,7 @@ namespace WebAPI.Services.Farms
                     var farmDto = new FarmDetailDto()
                     {
                         Id = farm.Id,
+                        Eui = farm.Eui,
                         Name = farm.Name,
                         Location = farm.Location,
                         PlantKeepers = farm.PlantKeepers.Select(pk => new PlantKeeperDetailDto
@@ -79,8 +115,7 @@ namespace WebAPI.Services.Farms
                         {
                         Id = s.Id,
                         Model = s.Model,
-                        Type = s.SensorType.Type,
-                        Unit = s.Unit,
+                        // Type = s.SensorType.Type,
                         SensorSetting = s.SensorSetting != null ? new SensorSettingDto
                         {
                             DesiredValue = s.SensorSetting.DesiredValue,
@@ -109,7 +144,6 @@ namespace WebAPI.Services.Farms
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
 
@@ -120,16 +154,16 @@ namespace WebAPI.Services.Farms
                 Farm farm = new Farm()
                 {
                     Id = farmDto.Id,
+                    Eui = farmDto.EUI,
                     Location = farmDto.Location,
                     Name = farmDto.Name,
                 };
-                _dataContext.Farm.Add(farm);
+                await _dataContext.Farm.AddAsync(farm);
                 await _dataContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
     }

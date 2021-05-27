@@ -1,87 +1,58 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
-using WebAPI.Models.Models;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
+using WebAPI.Database.Models;
 
 namespace WebAPI.Services.PlantKeepers
 {
     public class PlantKeepersService : IPlantKeepersService
     {
-        private DataContext _dataContext;
+        private readonly DataContext _dataContext;
         
         public PlantKeepersService(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        public async Task<PlantKeeperDetailDto> GetPlantKeeperByIdAsync(int plantKeeperId)
+        public async Task<PlantKeeper> AddPlantKeeperAsync(PlantKeeper plantKeeper)
         {
-            try
-            {
-                var foundPlantKeeper = await _dataContext.PlantKeeper
-                    .Select(pk => new PlantKeeperDetailDto
-                    {
-                        Id = pk.Id,
-                        FirstName = pk.FirstName,
-                        LastName = pk.LastName,
-                        Email = pk.Email,
-                        DateOfBirth = pk.DateOfBirth,
-                        Gender = pk.Gender,
-                        Farms = pk.Farms.Select(f => new FarmDetailDto
-                        {
-                            Id = f.Id,
-                            Name = f.Name,
-                            Location = f.Location
-                        })
-                    }).SingleOrDefaultAsync(pk => pk.Id == plantKeeperId);
-                
-                return foundPlantKeeper;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return new PlantKeeperDetailDto();
-            }
+            plantKeeper.CreatedAt = plantKeeper.UpdatedAt = DateTime.Now;
+
+            await _dataContext.PlantKeeper.AddAsync(plantKeeper);
+            await _dataContext.SaveChangesAsync();
+
+            return await GetPlantKeeperByIdAsync(plantKeeper.Id);
+        }
+
+        public async Task<PlantKeeper> GetPlantKeeperByIdAsync(int plantKeeperId)
+        {
+            var foundPlantKeeper = await _dataContext.PlantKeeper
+                .Include(pk => pk.Farms)
+                .FirstOrDefaultAsync(pk => pk.Id == plantKeeperId);
+            
+            if (foundPlantKeeper == null)
+                throw new NullReferenceException();
+
+            return foundPlantKeeper;
+        }
+
+        public Task<IEnumerable<PlantKeeper>> GetAllFarmPlantKeepersAsync(int farmId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task RemovePlantKeeperByIdAsync(int plantKeeperId)
         {
-            try
-            {
-                var plantKeeperToRemove = await _dataContext.PlantKeeper.FindAsync(plantKeeperId);
-                _dataContext.PlantKeeper.Remove(plantKeeperToRemove);
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-        
-        public async Task CreatePlantKeeperAsync(PlantKeeperDto plantKeeperDto)
-        {
-            try
-            {
-                var plantKeeper = new PlantKeeper()
-                {
-                    Id = plantKeeperDto.Id,
-                    FirstName = plantKeeperDto.FirstName,
-                    LastName = plantKeeperDto.LastName,
-                    Email = plantKeeperDto.Email
-                };
-                
-                _dataContext.PlantKeeper.Add(plantKeeper);
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var foundPlantKeeper = await _dataContext.PlantKeeper.FindAsync(plantKeeperId);
+
+            if (foundPlantKeeper == null)
+                throw new NullReferenceException();
+            
+            _dataContext.PlantKeeper.Remove(foundPlantKeeper);
+            await _dataContext.SaveChangesAsync();
         }
     }
 }

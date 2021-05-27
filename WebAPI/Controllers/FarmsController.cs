@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
 using WebAPI.Services.Farms;
 
 namespace WebAPI.Controllers
@@ -18,10 +18,19 @@ namespace WebAPI.Controllers
         {
             _farmsService = farmsService;
         }
+
+        [HttpGet("eui/{EUI}")]
+        public async Task<IActionResult> GetFarmByEui(string eui)
+        {
+            var foundFarm = await _farmsService.GetFarmByEUI(eui);
+
+            if (foundFarm == null)
+                return NotFound();
+
+            return Ok(foundFarm);
+        }
         
         [HttpGet("{farmId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFarm(int farmId)
         {
             var foundFarm = await _farmsService.GetFarmByIdAsync(farmId);

@@ -30,12 +30,13 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine("DefaultConnection ->" + Configuration.GetConnectionString("DefaultConnection"));
+            Console.WriteLine("DefaultConnection -> " + Configuration.GetConnectionString("DefaultConnection"));
             services.AddDbContextPool<DataContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebAPI", Version = "v1"}); });
+            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IPlantKeepersService, PlantKeepersService>();
             services.AddScoped<IFarmsService, FarmsService>();
             services.AddScoped<ISensorsService, SensorsService>();

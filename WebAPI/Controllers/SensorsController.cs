@@ -1,24 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
+using WebAPI.Database.Models;
 using WebAPI.Services.Sensors;
-using WebAPI.Services.SensorSettings;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/farms/{farmId}/sensors")]
     public class SensorsController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly ISensorsService _sensorsService;
-        private readonly ISensorSettingsService _sensorSettingsService;
-
-        public SensorsController(ISensorsService sensorsService, ISensorSettingsService sensorSettingsService)
+        
+        public SensorsController(IMapper mapper, ISensorsService sensorsService)
         {
+            _mapper = mapper;
             _sensorsService = sensorsService;
-            _sensorSettingsService = sensorSettingsService;
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddSensor(int farmId, SensorDto sensorToCreate)
+        {
+            var createdSensor = await _sensorsService.AddSensorAsync(farmId, _mapper.Map<Sensor>(sensorToCreate));
+        
+            return Ok(_mapper.Map<SensorDto>(createdSensor));
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAllFarmSensorsAsync(int farmId)
+        {
+            try
+            {
+                var foundSensors = await _sensorsService
+                    .GetAllFarmSensorsAsync(farmId);
+
+                if (foundSensors == null)
+                    return NoContent();
+            
+                return Ok(_mapper.Map<IEnumerable<SensorDetailDto>>(foundSensors));
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("{sensorId}")]
@@ -28,42 +56,20 @@ namespace WebAPI.Controllers
 
             if (foundSensor == null)
                 return NotFound();
-
-            return Ok(foundSensor);
+            
+            return Ok(_mapper.Map<SensorDetailDto>(foundSensor));
         }
-
-        [HttpPost]
-        public async Task<ActionResult<SensorDto>> AddSensor([FromBody] SensorDto sensor)
-        {
-            await _sensorsService.AddSensorAsync(sensor);
-
-            return sensor;
-        }
-
-        [HttpPut("{sensorId}/settings")]
-        public async Task<IActionResult> PutSensorSettings(int sensorId, SensorSettingDto sensorSetting)
+        
+        [HttpDelete("{sensorId}")]
+        public async Task<IActionResult> RemoveSensorById(int sensorId)
         {
             try
             {
-                await _sensorSettingsService.UpdateSensorSettingsAsync(sensorId, sensorSetting);
-
-                return Ok();
+                await _sensorsService.RemoveSensorByIdAsync(sensorId);
+                
+                return NoContent();
             }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-        }
-
-        [HttpGet("{sensorId}/settings")]
-        public async Task<ActionResult<SensorSettingDto>> GetSensorSettings(int sensorId)
-        {
-            try
-            {
-                var sensorSettings = await _sensorSettingsService.GetSensorSettingsByIdAsync(sensorId);
-                return sensorSettings;
-            }
-            catch (NullReferenceException)
+            catch (NullReferenceException )
             {
                 return NotFound();
             }
