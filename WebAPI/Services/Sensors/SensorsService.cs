@@ -52,6 +52,7 @@ namespace WebAPI.Services.Sensors
             
             var foundSensors = await _dataContext.Sensor
                 .Include(s => s.SensorType)
+                .Include(s=>s.SensorSetting)
                 .Where(s => s.FarmId == farmId)
                 .ToListAsync();
 

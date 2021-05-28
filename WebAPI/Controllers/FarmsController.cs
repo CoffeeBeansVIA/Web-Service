@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Database.DTOs;
+using WebAPI.Database.Models;
 using WebAPI.Services.Farms;
+using WebAPI.Services.Measurements;
 
 namespace WebAPI.Controllers
 {
@@ -12,11 +15,13 @@ namespace WebAPI.Controllers
     [ApiController]
     public class FarmsController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IFarmsService _farmsService;
 
-        public FarmsController(IFarmsService farmsService)
+        public FarmsController(IFarmsService farmsService, IMapper mapper)
         {
             _farmsService = farmsService;
+            _mapper = mapper;
         }
 
         [HttpGet("eui/{EUI}")]
@@ -27,9 +32,9 @@ namespace WebAPI.Controllers
             if (foundFarm == null)
                 return NotFound();
 
-            return Ok(foundFarm);
+            return Ok(_mapper.Map<FarmDetailDto>(foundFarm));
         }
-        
+
         [HttpGet("{farmId}")]
         public async Task<IActionResult> GetFarm(int farmId)
         {
@@ -44,15 +49,11 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IList<FarmDetailDto>>> GetFarms()
         {
-            try
-            {
-                return Ok(await _farmsService.GetAllFarmsAsync());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var fetchedFarms = await _farmsService.GetAllFarmsAsync();
+            if (fetchedFarms == null)
+                return NoContent();
+
+            return Ok(_mapper.Map<IEnumerable<FarmDetailDto>>(fetchedFarms));
         }
 
         [HttpDelete("{farmId}")]
@@ -63,15 +64,14 @@ namespace WebAPI.Controllers
                 await _farmsService.RemoveFarmByIdAsync(farmId);
                 return Ok();
             }
-            catch (Exception e)
+            catch (NullReferenceException)
             {
-                Console.WriteLine(e);
-                throw;
+                return NotFound();
             }
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> CreateFarm(FarmDto farm)
+        public async Task<IActionResult> CreateFarm(Farm farm)
         {
             try
             {
