@@ -14,7 +14,7 @@ services:
     image: microsoft/mssql-server-linux
     hostname: 'db'
     ports:
-      - "8650:1433"
+      - "1433:1433"
     environment:
       DatabaseServer: "db"
       DatabaseUser: "SA"
