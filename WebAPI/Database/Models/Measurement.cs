@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebAPI.Database.Models
 {
@@ -9,6 +10,7 @@ namespace WebAPI.Database.Models
         public DateTime Time { get; set; }
         
         public int SensorId { get; set; }
+        [NotNull]
         public Sensor Sensor { get; set; }
     }
 }

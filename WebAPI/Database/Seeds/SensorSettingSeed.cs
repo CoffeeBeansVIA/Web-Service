@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebAPI.Database.Models;
 
 namespace WebAPI.Database.Seeds
@@ -9,7 +10,7 @@ namespace WebAPI.Database.Seeds
         {
             return new List<SensorSetting>
             {
-                new SensorSetting { Id = 1, SensorId = 1, DesiredValue = 25, DeviationValue = 5 }
+                new SensorSetting { Id = 1, SensorId = 1, DesiredValue = 25, DeviationValue = 5, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             };
         }
     }

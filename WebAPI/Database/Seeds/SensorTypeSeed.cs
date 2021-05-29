@@ -10,7 +10,7 @@ namespace WebAPI.Database.Seeds
         {
             return new List<SensorType>
             {
-                new SensorType { Id = 1, Type = SensorTypes.Temperature, MeasurementUnit = SensorTypes.Temperature.GetDescription()},
+                new SensorType { Id = 1, Type = SensorTypes.Temperature, MeasurementUnit = SensorTypes.Temperature.GetDescription() },
                 new SensorType { Id = 2, Type = SensorTypes.Humidity, MeasurementUnit = SensorTypes.Humidity.GetDescription() },
                 new SensorType { Id = 3, Type = SensorTypes.Sound, MeasurementUnit = SensorTypes.Sound.GetDescription() },
                 new SensorType { Id = 4, Type = SensorTypes.Light, MeasurementUnit = SensorTypes.Light.GetDescription() },
