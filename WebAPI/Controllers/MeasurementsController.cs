@@ -43,14 +43,15 @@ namespace WebAPI.Controllers
         {
             try
             {
-                if (from >= to)
+                if (from != default && to != default && from >= to)
                     return BadRequest();
                 
                 IEnumerable<Measurement> foundMeasurements;
-                var validatedTo = to == default ? DateTime.Now : to;
 
-                if (from != default || to != default)
-                    foundMeasurements = await _measurementsService.GetSensorMeasurementsBetweenDatesAsync(sensorId, from, validatedTo, limit);
+                if (from != default && to != default || to != default)
+                    foundMeasurements = await _measurementsService.GetSensorMeasurementsBetweenDatesAsync(sensorId, from, to, limit);
+                else if (from != default)
+                    foundMeasurements = await _measurementsService.GetSensorMeasurementsBetweenDatesAsync(sensorId, from, DateTime.Now, limit);
                 else
                     foundMeasurements = await _measurementsService.GetSensorMeasurementsAsync(sensorId, limit);
                 
