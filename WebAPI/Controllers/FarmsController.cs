@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Database.DTOs;
 using WebAPI.Database.Models;
 using WebAPI.Services.Farms;
-using WebAPI.Services.Measurements;
 
 namespace WebAPI.Controllers
 {

@@ -8,5 +8,6 @@ namespace Tests.Models
         public string EUI { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
+        
     }
 }
