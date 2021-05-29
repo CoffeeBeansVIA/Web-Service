@@ -1,12 +1,10 @@
-﻿namespace WebAPI.Models.DTOs
-{
-    public class SensorSettingDto
-    {
-        public double DesiredValue { get; set; }
-        public double DeviationValue { get; set; }
-        public int SensorId { get; set; }
-        
-        public SensorDto Sensor { get; set; }
+﻿using WebAPI.Database.Models;
 
+namespace WebAPI.Database.DTOs
+{
+    public class SensorSettingDto : BaseModel
+    {
+        public int DesiredValue { get; set; }
+        public int DeviationValue { get; set; }
     }
 }

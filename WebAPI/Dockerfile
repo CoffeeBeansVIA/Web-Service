@@ -4,11 +4,10 @@ RUN dotnet tool install -g dotnet-ef
 
 COPY . /app
 WORKDIR /app
+EXPOSE 80/tcp
 
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
-
-EXPOSE 80/tcp
 
 RUN chmod +x ./entrypoint.sh
 CMD /bin/bash ./entrypoint.sh

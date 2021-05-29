@@ -30,19 +30,5 @@ namespace Tests
             }
         }
         
-        [Test]
-        public async Task GetFarms()
-        {
-            var Base = "http://localhost:5000";
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Base+"/api/Farms"))
-                {
-                    var apiResponse = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<FarmList>(apiResponse);
-                    Assert.AreEqual(1, result.Farms.Count);
-                }
-            }
-        }
     }
 }

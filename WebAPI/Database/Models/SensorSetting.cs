@@ -1,10 +1,10 @@
-namespace WebAPI.Models.Models
+namespace WebAPI.Database.Models
 {
-    public class SensorSetting
+    public class SensorSetting : BaseModel
     {
         public int Id { get; set; }
-        public double DesiredValue { get; set; }
-        public double DeviationValue { get; set; }
+        public int DesiredValue { get; set; }
+        public int DeviationValue { get; set; }
         public int SensorId { get; set; }
         public Sensor Sensor { get; set; }
     }

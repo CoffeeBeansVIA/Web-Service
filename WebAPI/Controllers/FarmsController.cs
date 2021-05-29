@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.DTOs;
+using WebAPI.Database.DTOs;
+using WebAPI.Database.Models;
 using WebAPI.Services.Farms;
+using WebAPI.Services.Measurements;
 
 namespace WebAPI.Controllers
 {
@@ -12,38 +15,45 @@ namespace WebAPI.Controllers
     [ApiController]
     public class FarmsController : ControllerBase
     {
-        private readonly IFarmService _farmService;
+        private readonly IMapper _mapper;
+        private readonly IFarmsService _farmsService;
 
-        public FarmsController(IFarmService farmService)
+        public FarmsController(IFarmsService farmsService, IMapper mapper)
         {
-            _farmService = farmService;
+            _farmsService = farmsService;
+            _mapper = mapper;
         }
-        
-        [HttpGet("{farmId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFarm(int farmId)
+
+        [HttpGet("eui/{EUI}")]
+        public async Task<IActionResult> GetFarmByEui(string eui)
         {
-            var foundFarm = await _farmService.GetFarmByIdAsync(farmId);
+            var foundFarm = await _farmsService.GetFarmByEUI(eui);
 
             if (foundFarm == null)
                 return NotFound();
 
-            return Ok(foundFarm);
+            return Ok(_mapper.Map<FarmDetailDto>(foundFarm));
+        }
+
+        [HttpGet("{farmId}")]
+        public async Task<IActionResult> GetFarmById(int farmId)
+        {
+            var foundFarm = await _farmsService.GetFarmByIdAsync(farmId);
+
+            if (foundFarm == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<FarmDetailDto>(foundFarm));
         }
 
         [HttpGet]
         public async Task<ActionResult<IList<FarmDetailDto>>> GetFarms()
         {
-            try
-            {
-                return Ok(await _farmService.GetAllFarmsAsync());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var fetchedFarms = await _farmsService.GetAllFarmsAsync();
+            if (fetchedFarms == null)
+                return NoContent();
+
+            return Ok(_mapper.Map<IEnumerable<FarmDetailDto>>(fetchedFarms));
         }
 
         [HttpDelete("{farmId}")]
@@ -51,22 +61,21 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _farmService.RemoveFarmByIdAsync(farmId);
+                await _farmsService.RemoveFarmByIdAsync(farmId);
                 return Ok();
             }
-            catch (Exception e)
+            catch (NullReferenceException)
             {
-                Console.WriteLine(e);
-                throw;
+                return NotFound();
             }
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> CreateFarm(FarmDto farm)
+        public async Task<IActionResult> CreateFarm(Farm farm)
         {
             try
             {
-                await _farmService.CreateFarmAsync(farm);
+                await _farmsService.CreateFarmAsync(farm);
                 return Ok();
             }
             catch (Exception e)
