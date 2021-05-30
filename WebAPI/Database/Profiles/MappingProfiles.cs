@@ -9,6 +9,12 @@ namespace WebAPI.Database.Profiles
     {
         public MappingProfiles()
         {
+            // Measurement mapping
+            CreateMap<Measurement, MeasurementDto>().ReverseMap();
+            CreateMap<Measurement, MeasurementDetailDto>().ReverseMap();
+                // .ForMember(dest => );
+            
+            // Sensor mapping
             CreateMap<SensorDto, Sensor>()
                 .ForMember(dest => dest.SensorTypeId,
                     opt => opt.MapFrom((src, dest) =>
@@ -18,6 +24,7 @@ namespace WebAPI.Database.Profiles
 
                         return (int) parsedResult;
                     }));
+            
             CreateMap<Sensor, SensorDto>()
                 .ForMember(dest => dest.Type,
                     opt =>
@@ -25,6 +32,7 @@ namespace WebAPI.Database.Profiles
                 .ForMember(dest => dest.Unit,
                     opt =>
                         opt.MapFrom(src => src.SensorType.MeasurementUnit));
+            
             CreateMap<Sensor, SensorDetailDto>()
                 .ForMember(dest => dest.Type,
                     opt =>
@@ -32,18 +40,17 @@ namespace WebAPI.Database.Profiles
                 .ForMember(dest => dest.Unit,
                     opt =>
                         opt.MapFrom(src => src.SensorType.MeasurementUnit));
-            
 
-
+            // Sensor settings mapping
             CreateMap<SensorSetting, SensorSettingDto>().ReverseMap();
 
-            CreateMap<Measurement, MeasurementDto>().ReverseMap();
-
+            // Plant keeper mapping
             CreateMap<PlantKeeper, PlantKeeperDto>().ReverseMap();
             CreateMap<PlantKeeper, PlantKeeperDetailDto>().ReverseMap();
+            
+            // Farm mapping
             CreateMap<Farm, FarmDto>().ReverseMap();
             CreateMap<Farm, FarmDetailDto>().ReverseMap();
-
         }
     }
 }

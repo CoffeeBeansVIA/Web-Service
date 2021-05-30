@@ -62,9 +62,10 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
         }
-/**
- * Will return the last measurement from all sensors
- */
+        
+        /**
+         * Will return the last measurement from all sensors
+         */
         [HttpGet]
         [Route("~/api/farms/{farmId}/lastSensorsMeasurement")]
         public async Task<IActionResult> GetLastSensorsMeasurement(int farmId)
@@ -74,13 +75,14 @@ namespace WebAPI.Controllers
                 var randomMeasurement = await _measurementsService
                     .GetLastSensorsMeasurementAsync(farmId);
                 
-                return Ok(_mapper.Map<IEnumerable<MeasurementDto>>(randomMeasurement));
+                return Ok(_mapper.Map<IEnumerable<MeasurementDetailDto>>(randomMeasurement));
             }
             catch (NullReferenceException)
             {
                 return NotFound();
             }
         }
+        
         [HttpGet]
         [Route("randomMeasurements")]
         public async Task<IActionResult> GetRandomMeasurement(int sensorId)

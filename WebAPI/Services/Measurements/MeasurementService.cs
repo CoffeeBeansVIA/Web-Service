@@ -77,7 +77,7 @@ namespace WebAPI.Services.Measurements
 
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
-           IList<Measurement> measurements = new List<Measurement>();
+            IList<Measurement> measurements = new List<Measurement>();
             var farmSensors = GetAllFarmSensorsAsync(farmId);
             foreach (var sensor in farmSensors.Result)
             {
@@ -86,34 +86,33 @@ namespace WebAPI.Services.Measurements
                 measurements.Add(measurement);
             }
             
-            return (IEnumerable<Measurement>) measurements.ToArray().AsEnumerable();
+            return await GetAllFarmSensorsAsync(farmId);
         }
 
-        public async Task<IEnumerable<Sensor>> GetAllFarmSensorsAsync(int farmId)
+        private async Task<IEnumerable<Measurement>> GetAllFarmSensorsAsync(int farmId)
         {
             var foundFarm = await _dataContext.Farm.FindAsync(farmId);
 
             if (foundFarm == null)
                 throw new NullReferenceException();
             
-            var t=_dataContext.Sensor.Where(s => s.FarmId == farmId)
-                .ToListAsync();
+            // var t=_dataContext.Sensor.Where(s => s.FarmId == farmId)
+            //     .ToListAsync();
 
-            foreach (var sensor in t.Result)
-            {
-                var sensorInclude= _dataContext.Measurement
-                    .Include(s => s.Sensor)
-                    .ThenInclude(s=>s.SensorType).Where()
-            }
-            
-            var foundSensors =  _dataContext.Measurement
-                .Include(s => s.Sensor)
-                .ThenInclude(s=>s.SensorType)
-               
+            var measurements = _dataContext.Measurement
+                .Include(m => m.Sensor)
+                .ThenInclude(s => s.SensorType)
+                .Where(m => m.Sensor.FarmId == farmId)
+                .ToList()
+                .GroupBy(m => m.Sensor.Id)
+                .SelectMany(group => group);
 
-            return foundSensors;
+            // .Select(m => m.SensorId)
+                // .Distinct()
+                // .ToListAsync();
+
+            return measurements;
         }
-
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
         {
