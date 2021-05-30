@@ -72,10 +72,10 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var randomMeasurement = await _measurementsService
+                var lastMeasurement = await _measurementsService
                     .GetLastSensorsMeasurementAsync(farmId);
                 
-                return Ok(_mapper.Map<IEnumerable<MeasurementDetailDto>>(randomMeasurement));
+                return Ok(_mapper.Map<IEnumerable<MeasurementDetailDto>>(lastMeasurement));
             }
             catch (NullReferenceException)
             {
