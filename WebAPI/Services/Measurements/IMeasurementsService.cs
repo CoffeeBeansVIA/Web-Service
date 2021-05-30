@@ -11,5 +11,6 @@ namespace WebAPI.Services.Measurements
         Task<IEnumerable<Measurement>> GetSensorMeasurementsAsync(int sensorId, int limit);
         Task<IEnumerable<Measurement>> GetSensorMeasurementsBetweenDatesAsync(int sensorId, DateTime from, DateTime to, int limit);
         Task<Measurement> GetRandomValueSensorMeasurementAsync(int sensorId); // TODO remove on IoT connection 
+        Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId);
     }
 }

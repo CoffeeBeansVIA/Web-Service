@@ -1,21 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
 using WebAPI.Database.Models;
+using WebAPI.Services.Sensors;
 
 namespace WebAPI.Services.Measurements
 {
+    
     public class MeasurementService : IMeasurementsService
     {
+        private ISensorsService sensorsService;
         private readonly DataContext _dataContext;
         private readonly Random _random = new Random();
 
-        public MeasurementService(DataContext dataContext)
+        public MeasurementService(DataContext dataContext, ISensorsService sensorsService)
         {
             _dataContext = dataContext;
+            this.sensorsService = sensorsService;
         }
 
         public async Task<Measurement> AddMeasurementAsync(int sensorId, Measurement measurement)
@@ -68,6 +73,19 @@ namespace WebAPI.Services.Measurements
             };
 
             return await DbAddMeasurementAsync(randomMeasurement);
+        }
+
+        public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
+        {
+           IList<Measurement> measurements = new List<Measurement>();
+            var farmSensors = sensorsService.GetAllFarmSensorsAsync(farmId);
+            foreach (var sensor in farmSensors.Result)
+            {
+                var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time).FirstOrDefaultAsync(m=>m.SensorId==sensor.Id);
+                measurements.Add(measurement);
+            }
+            
+            return (IEnumerable<Measurement>) measurements.ToArray().AsEnumerable();
         }
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
