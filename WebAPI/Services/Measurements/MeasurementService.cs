@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,18 +76,22 @@ namespace WebAPI.Services.Measurements
 
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
-            IList<Measurement> measurements = new List<Measurement>();
-            var farmSensors = sensorsService.GetAllFarmSensorsAsync(farmId);
-            foreach (var sensor in farmSensors.Result)
-            {
-                var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time)
-                    .FirstOrDefaultAsync(m=>m.SensorId==sensor.Id);
-                measurements.Add(measurement);
-            }
-            
-            return (IEnumerable<Measurement>) measurements.ToArray().AsEnumerable();
+            var foundFarm = await _dataContext.Farm.FindAsync(farmId);
+
+            if (foundFarm == null)
+                throw new NullReferenceException();
+
+            var lastMeasurements = _dataContext.Measurement
+                .Include(m => m.Sensor)
+                .ThenInclude(s => s.SensorType)
+                .AsEnumerable()
+                .Where(m => m.Sensor.FarmId == farmId)
+                .GroupBy(m => m.SensorId)
+                .Select(m =>
+                    m.OrderByDescending(d => d.Time).FirstOrDefault());
+
+            return await Task.FromResult(lastMeasurements);
         }
-        
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
         {
