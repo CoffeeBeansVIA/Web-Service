@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,15 +76,6 @@ namespace WebAPI.Services.Measurements
 
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
-            IList<Measurement> measurements = new List<Measurement>();
-            var farmSensors = GetAllFarmSensorsAsync(farmId);
-            foreach (var sensor in farmSensors.Result)
-            {
-                var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time)
-                    .FirstOrDefaultAsync(m=>m.SensorId==sensor.Id);
-                measurements.Add(measurement);
-            }
-            
             return await GetAllFarmSensorsAsync(farmId);
         }
 
@@ -95,21 +85,16 @@ namespace WebAPI.Services.Measurements
 
             if (foundFarm == null)
                 throw new NullReferenceException();
-            
-            // var t=_dataContext.Sensor.Where(s => s.FarmId == farmId)
-            //     .ToListAsync();
 
             var measurements = _dataContext.Measurement
                 .Include(m => m.Sensor)
                 .ThenInclude(s => s.SensorType)
+                .AsEnumerable()
                 .Where(m => m.Sensor.FarmId == farmId)
-                .ToList()
-                .GroupBy(m => m.Sensor.Id)
-                .SelectMany(group => group);
-
-            // .Select(m => m.SensorId)
-                // .Distinct()
-                // .ToListAsync();
+                .GroupBy(m => m.SensorId)
+                .Select(m =>
+                    m.OrderByDescending(d => d.Time).FirstOrDefault())
+                .ToList();
 
             return measurements;
         }
