@@ -76,27 +76,21 @@ namespace WebAPI.Services.Measurements
 
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
-            return await GetAllFarmSensorsAsync(farmId);
-        }
-
-        private async Task<IEnumerable<Measurement>> GetAllFarmSensorsAsync(int farmId)
-        {
             var foundFarm = await _dataContext.Farm.FindAsync(farmId);
 
             if (foundFarm == null)
                 throw new NullReferenceException();
 
-            var measurements = _dataContext.Measurement
+            var lastMeasurements = _dataContext.Measurement
                 .Include(m => m.Sensor)
                 .ThenInclude(s => s.SensorType)
                 .AsEnumerable()
                 .Where(m => m.Sensor.FarmId == farmId)
                 .GroupBy(m => m.SensorId)
                 .Select(m =>
-                    m.OrderByDescending(d => d.Time).FirstOrDefault())
-                .ToList();
+                    m.OrderByDescending(d => d.Time).FirstOrDefault());
 
-            return measurements;
+            return await Task.FromResult(lastMeasurements);
         }
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
