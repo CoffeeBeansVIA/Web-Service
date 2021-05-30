@@ -69,12 +69,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFarm(Farm farm)
+        public async Task<IActionResult> CreateFarm(FarmDto farm)
         {
             try
             {
-                await _farmsService.CreateFarmAsync(farm);
-                return Ok();
+                var createdFarm=await _farmsService.CreateFarmAsync(_mapper.Map<Farm>(farm));
+                return Ok(_mapper.Map<FarmDto>(createdFarm));
             }
             catch (Exception e)
             {

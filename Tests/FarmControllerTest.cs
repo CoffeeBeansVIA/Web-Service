@@ -10,10 +10,11 @@ namespace Tests
     
     public class FarmControllerTest
     {
+     
         #region Variables  
         private Farm _farm;
         #endregion 
-        
+        private Farm _farm2;
         [Test, Order(1)]
         public async Task CreateFarmTest()
         {
@@ -31,7 +32,7 @@ namespace Tests
                     var apiResponse = await response.Content.ReadAsStringAsync();
                     _farm = JsonConvert.DeserializeObject<Farm>(apiResponse);
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
-                    Assert.AreEqual(8, _farm.Id);
+                   // Assert.AreEqual(8, _farm.Id);
                 }
             }
         }
@@ -41,7 +42,7 @@ namespace Tests
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/"+_farm.EUI))
+                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/eui/"+_farm.EUI))
                 {
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }

@@ -62,11 +62,12 @@ namespace WebAPI.Services.Farms
             await _dataContext.SaveChangesAsync();
         }
 
-        public async Task CreateFarmAsync(Farm farm)
+        public async Task<Farm> CreateFarmAsync(Farm farm)
         {
            farm.CreatedAt = farm.UpdatedAt = DateTime.Now;
            await _dataContext.Farm.AddAsync(farm);
            await _dataContext.SaveChangesAsync();
+           return farm;
         }
     }
 }

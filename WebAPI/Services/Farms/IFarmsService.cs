@@ -11,6 +11,6 @@ namespace WebAPI.Services.Farms
         Task<Farm> GetFarmByIdAsync(int farmId);
         Task<IEnumerable<Farm>> GetAllFarmsAsync();
         Task RemoveFarmByIdAsync(int farmId);
-        Task CreateFarmAsync(Farm farm);
+        Task<Farm> CreateFarmAsync(Farm farm);
     }
 }
