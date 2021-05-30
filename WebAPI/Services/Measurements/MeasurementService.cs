@@ -78,15 +78,42 @@ namespace WebAPI.Services.Measurements
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
            IList<Measurement> measurements = new List<Measurement>();
-            var farmSensors = sensorsService.GetAllFarmSensorsAsync(farmId);
+            var farmSensors = GetAllFarmSensorsAsync(farmId);
             foreach (var sensor in farmSensors.Result)
             {
-                var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time).FirstOrDefaultAsync(m=>m.SensorId==sensor.Id);
+                var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time)
+                    .FirstOrDefaultAsync(m=>m.SensorId==sensor.Id);
                 measurements.Add(measurement);
             }
             
             return (IEnumerable<Measurement>) measurements.ToArray().AsEnumerable();
         }
+
+        public async Task<IEnumerable<Sensor>> GetAllFarmSensorsAsync(int farmId)
+        {
+            var foundFarm = await _dataContext.Farm.FindAsync(farmId);
+
+            if (foundFarm == null)
+                throw new NullReferenceException();
+            
+            var t=_dataContext.Sensor.Where(s => s.FarmId == farmId)
+                .ToListAsync();
+
+            foreach (var sensor in t.Result)
+            {
+                var sensorInclude= _dataContext.Measurement
+                    .Include(s => s.Sensor)
+                    .ThenInclude(s=>s.SensorType).Where()
+            }
+            
+            var foundSensors =  _dataContext.Measurement
+                .Include(s => s.Sensor)
+                .ThenInclude(s=>s.SensorType)
+               
+
+            return foundSensors;
+        }
+
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
         {

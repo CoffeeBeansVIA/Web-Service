@@ -1,4 +1,5 @@
-﻿using WebAPI.Database.Models;
+﻿using System;
+using WebAPI.Database.Models;
 
 namespace WebAPI.Database.DTOs
 {
@@ -18,4 +19,6 @@ namespace WebAPI.Database.DTOs
         public string Unit { get; set; }
         public SensorSettingDto SensorSetting { get; set; }
     }
+    
+   
 }
