@@ -1,9 +1,11 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using WebAPI.Database.DTOs;
-using WebAPI.Database.Models;
 
 namespace Tests
 {
@@ -29,24 +31,25 @@ namespace Tests
         [Test]
         public async Task GetLastSensorMeasurementTest()
         {
-            var measurement = new MeasurementDto()
+            var measurementToAdd = new MeasurementDto()
             {
                 Value = 22
             };
             
             using (var httpClient = new HttpClient())
             {
-                MeasurementDto _measurement;
-                using (var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/farms/1/sensors/1/measurements", measurement))
+                MeasurementDto measurement;
+                using (var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/farms/1/sensors/1/measurements", measurementToAdd))
                 {
-                    _measurement = response.Content.ReadFromJsonAsync<MeasurementDto>().Result;
+                    measurement = response.Content.ReadFromJsonAsync<MeasurementDto>().Result;
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
+                    Assert.NotNull(measurement);
                 }
                 using (var response = await httpClient.GetAsync("http://localhost:5000/api/farms/1/lastSensorsMeasurement"))
                 {
-                    var lastMeasurement = response.Content.ReadFromJsonAsync<MeasurementDto>().Result;
+                    var apiResponse = response.Content.ReadAsStringAsync().Result;
+                    var lastMeasurements = JsonConvert.DeserializeObject<List<MeasurementDto>>(apiResponse);
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
-                    Assert.AreEqual(_measurement.Value, lastMeasurement.Value);
                 }
             }
         }

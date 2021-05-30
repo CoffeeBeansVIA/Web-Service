@@ -27,10 +27,10 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _measurementsService
+                var measurement = await _measurementsService
                     .AddMeasurementAsync(sensorId, _mapper.Map<Measurement>(measurementToCreate));
                 
-                return Ok();
+                return Ok(measurement);
             }
             catch (NullReferenceException)
             {
