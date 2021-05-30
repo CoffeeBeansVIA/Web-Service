@@ -1,24 +1,17 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using Tests.Models;
+using WebAPI.Database.DTOs;
 
 namespace Tests
 {
-    
     public class FarmControllerTest
     {
-     
-        #region Variables  
-        private Farm _farm;
-        #endregion 
-        private Farm _farm2;
-        [Test, Order(1)]
+        [Test]
         public async Task CreateFarmTest()
         {
-            var farm = new Farm()
+            var farm = new FarmDto()
             {
                 EUI = "X9999",
                 Name = "Jensen",
@@ -27,22 +20,25 @@ namespace Tests
 
             using (var httpClient = new HttpClient())
             {
+                FarmDto _farm;
                 using (var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/Farms", farm))
                 {
-                    var apiResponse = await response.Content.ReadAsStringAsync();
-                    _farm = JsonConvert.DeserializeObject<Farm>(apiResponse);
+                    _farm = response.Content.ReadFromJsonAsync<FarmDto>().Result;
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
-                   // Assert.AreEqual(8, _farm.Id);
+                }
+                using (var response = await httpClient.DeleteAsync("http://localhost:5000/api/Farms/"+_farm.Id))
+                {
+                    Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }
             }
         }
 
-        [Test, Order(2)]
+        [Test]
         public async Task GetByEUIFarmTest()
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/eui/"+_farm.EUI))
+                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/eui/0004A30B0021B92F"))
                 {
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }
@@ -50,20 +46,20 @@ namespace Tests
         }
 
 
-        [Test, Order(3)]
+        [Test]
         public async Task GetByIdFarmTest()
         {
             using (var httpClient = new HttpClient())
             {
                 
-                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/"+_farm.Id))
+                using (var response = await httpClient.GetAsync("http://localhost:5000/api/Farms/1"))
                 {
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }
             }
         }
         
-        [Test, Order(4)]
+        [Test]
         public async Task GetFarmsTest()
         {
             using (var httpClient = new HttpClient())
@@ -74,18 +70,5 @@ namespace Tests
                 }
             }
         }
-
-        [Test, Order(5)]
-        public async Task DeleteFarmTest()
-        {
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.DeleteAsync("http://localhost:5000/api/Farms/"+_farm.Id))
-                {
-                    Assert.AreEqual(true, response.IsSuccessStatusCode);
-                }
-            }
-        }
-
     }
 }

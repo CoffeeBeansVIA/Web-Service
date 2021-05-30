@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using Tests.Models;
+using WebAPI.Database.DTOs;
 
 namespace Tests
 {
@@ -13,14 +11,14 @@ namespace Tests
         [Test]
         public async Task CreateMeasurement()
         {
-            var measurement = new Measurement()
+            var measurement = new MeasurementDto()
             {
                 Value = 22
             };
 
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/farms/{farmId}/sensors/{sensorId}/measurements", measurement))
+                using (var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/farms/1/sensors/1/measurements", measurement))
                 {
                     Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }
@@ -35,7 +33,7 @@ namespace Tests
             {
                 using (var response = await httpClient.GetAsync("http://localhost:5000/api/farms/1/sensors/1/measurements"))
                 {
-                    Assert.AreEqual(true, response.TrailingHeaders);
+                    Assert.AreEqual(true, response.IsSuccessStatusCode);
                 }
             }
         }
