@@ -9,7 +9,7 @@ namespace Tests
     public class PlantKeepersControllerTest
     {
         [Test]
-        public async Task CreateFarmTest()
+        public async Task CreateAndDeletePlantKeeperTest()
         {
             var plantKeeper = new PlantKeeperDto()
             {

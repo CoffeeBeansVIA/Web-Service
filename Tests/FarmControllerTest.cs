@@ -9,7 +9,7 @@ namespace Tests
     public class FarmControllerTest
     {
         [Test]
-        public async Task CreateFarmTest()
+        public async Task CreateAndDeleteFarmTest()
         {
             var farm = new FarmDto()
             {

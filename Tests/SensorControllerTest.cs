@@ -9,7 +9,7 @@ namespace Tests
     public class SensorControllerTest
     {
         [Test]
-        public async Task CreateSensorTest()
+        public async Task CreateAndDeleteSensorTest()
         {
             var sensor = new SensorDto()
             {
