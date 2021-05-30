@@ -78,7 +78,7 @@ namespace WebAPI.Services.Measurements
         public async Task<IEnumerable<Measurement>> GetLastSensorsMeasurementAsync(int farmId)
         {
             IList<Measurement> measurements = new List<Measurement>();
-            var farmSensors = GetAllFarmSensorsAsync(farmId);
+            var farmSensors = sensorsService.GetAllFarmSensorsAsync(farmId);
             foreach (var sensor in farmSensors.Result)
             {
                 var measurement= await _dataContext.Measurement.OrderByDescending(m => m.Time)
@@ -86,33 +86,9 @@ namespace WebAPI.Services.Measurements
                 measurements.Add(measurement);
             }
             
-            return await GetAllFarmSensorsAsync(farmId);
+            return (IEnumerable<Measurement>) measurements.ToArray().AsEnumerable();
         }
-
-        private async Task<IEnumerable<Measurement>> GetAllFarmSensorsAsync(int farmId)
-        {
-            var foundFarm = await _dataContext.Farm.FindAsync(farmId);
-
-            if (foundFarm == null)
-                throw new NullReferenceException();
-            
-            // var t=_dataContext.Sensor.Where(s => s.FarmId == farmId)
-            //     .ToListAsync();
-
-            var measurements = _dataContext.Measurement
-                .Include(m => m.Sensor)
-                .ThenInclude(s => s.SensorType)
-                .Where(m => m.Sensor.FarmId == farmId)
-                .ToList()
-                .GroupBy(m => m.Sensor.Id)
-                .SelectMany(group => group);
-
-            // .Select(m => m.SensorId)
-                // .Distinct()
-                // .ToListAsync();
-
-            return measurements;
-        }
+        
 
         private async Task<Measurement> DbAddMeasurementAsync(Measurement measurement)
         {
