@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Database;
@@ -51,6 +53,14 @@ namespace WebAPI.Services.SensorSettings
             await _dataContext.SaveChangesAsync();
             
             return foundSensor.SensorSetting;
+        }
+        
+        public async Task UpdateMultipleSensorSettingsAsync(IEnumerable<Sensor> multipleSensors)
+        {
+            foreach (var sensor in multipleSensors)
+            {
+                await UpdateSensorSettingsAsync(sensor.Id, sensor.SensorSetting);
+            }
         }
 
         public async Task RemoveSensorSettingsByIdAsync(int sensorId)

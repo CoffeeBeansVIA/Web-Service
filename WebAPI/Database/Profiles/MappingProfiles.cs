@@ -2,6 +2,7 @@
 using AutoMapper;
 using WebAPI.Database.DTOs;
 using WebAPI.Database.Models;
+using WebAPI.Database.Seeds;
 
 namespace WebAPI.Database.Profiles
 {
@@ -12,7 +13,6 @@ namespace WebAPI.Database.Profiles
             // Measurement mapping
             CreateMap<Measurement, MeasurementDto>().ReverseMap();
             CreateMap<Measurement, MeasurementDetailDto>().ReverseMap();
-                // .ForMember(dest => );
             
             // Sensor mapping
             CreateMap<SensorDto, Sensor>()
@@ -40,6 +40,8 @@ namespace WebAPI.Database.Profiles
                 .ForMember(dest => dest.Unit,
                     opt =>
                         opt.MapFrom(src => src.SensorType.MeasurementUnit));
+
+            CreateMap<SensorDetailDto, Sensor>();
 
             // Sensor settings mapping
             CreateMap<SensorSetting, SensorSettingDto>().ReverseMap();
