@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,23 @@ namespace WebAPI.Controllers
                     .UpdateSensorSettingsAsync(sensorId, _mapper.Map<SensorSetting>(sensorSetting));
                 
                 return Ok(_mapper.Map<SensorSettingDto>(updatedSensorSettings));
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+        
+        [HttpPut]
+        [Route("~/api/farms/{farmId}/sensors/settings")]
+        public async Task<IActionResult> PutMultipleSensorSettings(IEnumerable<SensorDetailDto> sensorsSetting)
+        {
+            try
+            {
+                await _sensorSettingsService
+                    .UpdateMultipleSensorSettingsAsync(_mapper.Map<IEnumerable<Sensor>>(sensorsSetting));
+                
+                return Ok();
             }
             catch (NullReferenceException)
             {

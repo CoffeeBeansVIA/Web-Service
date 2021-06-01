@@ -19,6 +19,4 @@ namespace WebAPI.Database.DTOs
         public string Unit { get; set; }
         public SensorSettingDto SensorSetting { get; set; }
     }
-    
-   
 }
