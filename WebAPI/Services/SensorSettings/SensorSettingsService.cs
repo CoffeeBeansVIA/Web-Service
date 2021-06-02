@@ -21,6 +21,7 @@ namespace WebAPI.Services.SensorSettings
         {
             var foundSensor = await _dataContext.Sensor
                 .Include(s => s.SensorSetting)
+                .Include(s=>s.SensorType)
                 .FirstOrDefaultAsync(s => s.Id == sensorId);
 
             return foundSensor.SensorSetting;

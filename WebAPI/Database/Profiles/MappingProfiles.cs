@@ -44,8 +44,12 @@ namespace WebAPI.Database.Profiles
             CreateMap<SensorDetailDto, Sensor>();
 
             // Sensor settings mapping
-            CreateMap<SensorSetting, SensorSettingDto>().ReverseMap();
-
+            CreateMap<SensorSetting, SensorSettingDto>().ForMember(dest => dest.Type,
+                opt =>
+                    opt.MapFrom(src=>src.Sensor.SensorType.Type)
+                );
+            CreateMap<SensorSettingDto, SensorSetting>();
+            
             // Plant keeper mapping
             CreateMap<PlantKeeper, PlantKeeperDto>().ReverseMap();
             CreateMap<PlantKeeper, PlantKeeperDetailDto>().ReverseMap();
